@@ -1,6 +1,7 @@
 <script>
 	import Header from '$lib/header/Header.svelte';
 	import '../app.css';
+	import "flowbite/dist/flowbite.css";
 </script>
 
 <Header />

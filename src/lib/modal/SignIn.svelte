@@ -1,10 +1,11 @@
 <script>
 	import { onMount } from "svelte"
-	import Modal from "flowbite/src/components/modal"
 
-	let modal = null;
+	let modal;
 
 	onMount(async () => {
+		const Modal = (await import('flowbite/src/components/modal')).default;
+		
 		// set the modal menu element
 		const targetEl = document.getElementById('modal-sign-in');
 
@@ -27,6 +28,7 @@
 	})
 
 	export function show() {
+		console.log(modal);
 		modal.show();
 	}
 

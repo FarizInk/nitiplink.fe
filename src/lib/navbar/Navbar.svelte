@@ -32,8 +32,8 @@ const baseMenu = "block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 ho
           <img class="w-8 h-8 rounded-full" src="https://ui-avatars.com/api/?background=random&name=Fariz" alt="user photo">
         </button>
 
-        <button type="button" class="btn-primary-small bg-blue-600 mr-3" on:click="{handleSignInBtnShow}">Sign In</button>
-        <button type="button" class="btn-secondary-small" on:click={handleSignUpBtnShow}>Sign Up</button>
+        <button type="button" class="btn-primary btn-xs bg-blue-600 mr-3" on:click="{handleSignInBtnShow}">Sign In</button>
+        <button type="button" class="btn-secondary btn-xs" on:click={handleSignUpBtnShow}>Sign Up</button>
 
         <!-- Dropdown menu -->
         <div class="hidden z-50 my-4 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown-user">

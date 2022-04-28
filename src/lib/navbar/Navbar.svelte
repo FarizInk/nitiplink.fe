@@ -3,16 +3,15 @@
 	import { changeTheme } from '$lib/helper';
 	import ModalSignIn from '$lib/modal/SignIn.svelte';
 	import ModalSignUp from '$lib/modal/SignUp.svelte';
-	import { theme } from '$lib/stores';
+	import { theme, token } from '$lib/stores';
 
 	const activeMenu =
 		'block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white';
+		// 'block py-2 pr-4 pl-3 md:p-0 animate-move-bg bg-gradient-to-r from-indigo-500 via-pink-500 to-indigo-500 bg-[length:400%] bg-clip-text text-transparent';
 	const baseMenu =
 		'block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700';
 
-	let modalSignIn = null;
-	let modalSignUp = null;
-	let themeVal = null;
+	let modalSignIn, modalSignUp, themeVal, authToken;
 
 	function handleSignInBtnShow() {
 		modalSignIn.show();
@@ -30,6 +29,7 @@
 	}
 
 	theme.subscribe((val) => (themeVal = val));
+	token.subscribe((val) => (authToken = val));
 </script>
 
 <nav
@@ -43,22 +43,56 @@
 					fill={themeVal === 'dark' ? 'white' : 'black'}
 				/>
 			</svg>
-			<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
-				>NitipLink</span
+			<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">NitipLink</span
 			>
 		</a>
 
 		<div class="flex items-center md:order-2">
+			{#if authToken === null}
 			<button
 				type="button"
 				class="btn-primary btn-xs bg-blue-600 mr-3"
 				on:click={handleSignInBtnShow}>Sign In</button
 			>
-			<button class="btn-secondary btn-xs" on:click={handleSignUpBtnShow}>Sign Up</button>
+			<button class="btn-secondary btn-xs mr-3" on:click={handleSignUpBtnShow}>Sign Up</button>
+			{/if}
 
+			<button class="btn-secondary btn-compact mr-3" on:click={toggleTheme}>
+				{#if themeVal === 'light'}
+					<svg
+						class="w-4 h-4"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+						xmlns="http://www.w3.org/2000/svg"
+						><path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+						/></svg
+					>
+				{:else}
+					<svg
+						class="w-4 h-4"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+						xmlns="http://www.w3.org/2000/svg"
+						><path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+						/></svg
+					>
+				{/if}
+			</button>
+
+			{#if authToken !== null}
 			<button
 				type="button"
-				class="flex mr-3 text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+				class="flex md:mr-3 text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
 				id="user-menu-button"
 				aria-expanded="false"
 				data-dropdown-toggle="dropdown-user"
@@ -143,38 +177,7 @@
 					/></svg
 				>
 			</button>
-      
-			<button class="btn-secondary btn-compact" on:click={toggleTheme}>
-				{#if themeVal === 'light'}
-					<svg
-						class="w-4 h-4"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-						><path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-						/></svg
-					>
-				{:else}
-					<svg
-						class="w-4 h-4"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-						><path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-						/></svg
-					>
-				{/if}
-			</button>
+			{/if}
 		</div>
 
 		<div

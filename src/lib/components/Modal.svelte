@@ -1,23 +1,25 @@
 <script>
-import { generateModalSize } from "$lib/helper";
-
-	import { onMount } from "svelte"
+	import { generateModalSize } from '$lib/helper';
+	import { onMount } from 'svelte';
 
 	let modal;
 
-    export let id, modalContainerClass;
-    export let position = 'center-center';
-	export let size = 'md' // avaiable: sm, md, lg, xl, full, screen;
+	export let id, modalContainerClass;
+	export let type = 'default'; // avaiable: default, popup;
+	export let position = 'center-center';
+	export let size = 'md'; // avaiable: sm, md, lg, xl, full, screen;
 	export let backdropClass = 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0';
 	export let backdropIndex = 'z-40';
 	export let zIndex = 'z-50';
+	export let footer = true;
+	export let title = "";
 
 	modalContainerClass = 'relative p-4 w-full h-full md:h-auto';
-	modalContainerClass+= generateModalSize(size);
+	modalContainerClass += generateModalSize(size);
 
 	onMount(async () => {
 		const Modal = (await import('$lib/libs/Modal')).default;
-		
+
 		// set the modal menu element
 		const targetEl = document.getElementById(id);
 
@@ -36,8 +38,8 @@ import { generateModalSize } from "$lib/helper";
 			}
 		};
 
-		modal = new Modal(targetEl, options)
-	})
+		modal = new Modal(targetEl, options);
+	});
 
 	export function show() {
 		modal.show();
@@ -52,31 +54,59 @@ import { generateModalSize } from "$lib/helper";
 <div
 	{id}
 	tabindex="-1"
-	class="{'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 w-full md:inset-0 h-modal md:h-full ' + zIndex }"
+	class={'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 w-full md:inset-0 h-modal md:h-full ' +
+		zIndex}
 >
 	<div class={modalContainerClass}>
+		{#if type === 'default'}
+		<!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
+                <slot name="header">
+					<h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+						{title}
+					</h3>
+				</slot>
+                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" on:click={hide}>
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>  
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="p-6 space-y-6">
+                <slot name="body"/>
+            </div>
+            {#if footer}
+			<!-- Modal footer -->
+            <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+                <slot name="footer"/>
+            </div>
+			{/if}
+        </div>
+		{:else if type === 'popup'}
 		<!-- Modal content -->
 		<div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-			<div class="flex justify-end p-2">
-				<button
-					type="button"
-					class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-					on:click={hide}
+			<button
+				type="button"
+				class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+				on:click={hide}
+			>
+				<svg
+					class="w-5 h-5"
+					fill="currentColor"
+					viewBox="0 0 20 20"
+					xmlns="http://www.w3.org/2000/svg"
+					><path
+						fill-rule="evenodd"
+						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+						clip-rule="evenodd"
+					/></svg
 				>
-					<svg
-						class="w-5 h-5"
-						fill="currentColor"
-						viewBox="0 0 20 20"
-						xmlns="http://www.w3.org/2000/svg"
-						><path
-							fill-rule="evenodd"
-							d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-							clip-rule="evenodd"
-						/></svg
-					>
-				</button>
+			</button>
+			<div class="py-6 px-6 lg:px-8">
+				<slot name="body" />
 			</div>
-			<slot />
 		</div>
+		{/if}
 	</div>
 </div>

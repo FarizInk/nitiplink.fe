@@ -4,19 +4,10 @@
 	import 'flowbite/dist/flowbite.css';
 	import Footer from '$lib/components/Footer.svelte';
 	import { onMount } from 'svelte';
-	import { changeTheme } from '$lib/helper';
-	import { theme, token } from '$lib/stores';
+	import { startedScipt } from '$lib/helper';
 
 	onMount(async () => {
-		if (localStorage.theme === undefined || localStorage.theme === null) {
-			localStorage.theme = 'light';
-			theme.set('light');
-		} else {
-			theme.set(localStorage.theme)
-		}
-		changeTheme();
-
-		if ('token' in localStorage) token.set(localStorage.token) 
+		startedScipt();
 	});
 </script>
 

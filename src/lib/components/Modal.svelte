@@ -1,8 +1,13 @@
 <script>
 	import { generateModalSize } from '$lib/helper';
-	import { onMount } from 'svelte';
+import { modals } from '$lib/stores';
+	import { createEventDispatcher, onMount } from 'svelte';
 
-	let modal;
+	const dispatch = createEventDispatcher();
+	const baseModalEffect = 'translate-y-6 opacity-0';
+	let modal, modalEffect, backdropEffect, modalStore;
+
+	modals.subscribe((value) => modalStore = value)
 
 	export let id, modalContainerClass;
 	export let type = 'default'; // avaiable: default, popup;
@@ -18,7 +23,8 @@
 	modalContainerClass += generateModalSize(size);
 
 	onMount(async () => {
-		const Modal = (await import('$lib/libs/Modal')).default;
+		// const Modal = (await import('$lib/libs/Modal')).default;
+		const Modal = (await import('flowbite/src/components/modal')).default;
 
 		// set the modal menu element
 		const targetEl = document.getElementById(id);
@@ -26,15 +32,28 @@
 		// options with default values
 		const options = {
 			placement: position,
-			backdropClasses: backdropClass + ' ' + backdropIndex,
+			backdropClasses: 'hidden',
 			onHide: () => {
-				console.log('modal is hidden');
+				modalEffect = baseModalEffect
+				backdropEffect = 'opacity-0'
+				modals.set(modalStore.filter((obj) => obj.id !== id))
+				dispatch('hide');
 			},
 			onShow: () => {
-				console.log('modal is shown');
+				modalEffect = baseModalEffect
+				backdropEffect = 'opacity-0'
+				setTimeout(() => modalEffect = backdropEffect = 'opacity-100', 10)
+				modals.set([
+					{
+						'id': id,
+						'class': modal
+					},
+					...modalStore
+				]);
+				dispatch('show');
 			},
 			onToggle: () => {
-				console.log('modal has been toggled');
+				dispatch('toggle');
 			}
 		};
 
@@ -46,18 +65,19 @@
 	}
 
 	export function hide() {
-		modal.hide();
+		modalEffect = baseModalEffect
+		backdropEffect = 'opacity-0'
+		setTimeout(() => modal.hide(), 150)
+		// modal.hide();
 	}
 </script>
 
-<!-- Modal Register -->
 <div
-	{id}
+	id={id}
 	tabindex="-1"
-	class={'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 w-full md:inset-0 h-modal md:h-full ' +
-		zIndex}
+	class={'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 w-full md:inset-0 h-modal md:h-full ' + zIndex}
 >
-	<div class={modalContainerClass}>
+	<div class={`transition duration-150 ease-in-out ${modalContainerClass} ${modalEffect} ${zIndex}`}>
 		{#if type === 'default'}
 		<!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -109,4 +129,5 @@
 		</div>
 		{/if}
 	</div>
+	<div class={`transition duration-150 ease-in-out ${backdropClass} ${backdropEffect} ${backdropIndex}`} on:click={hide}></div>
 </div>

@@ -1,3 +1,6 @@
+import { keydownListener } from "./libs/Keydown";
+import { theme, token } from "./stores";
+
 export function changeTheme() {
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
     if (
@@ -30,4 +33,28 @@ export function generateModalSize(size) {
 	}
 
     return value;
+}
+
+export function startedScipt() {
+	if (localStorage.theme === undefined || localStorage.theme === null) {
+		localStorage.theme = 'light';
+		theme.set('light');
+	} else {
+		theme.set(localStorage.theme)
+	}
+	changeTheme();
+
+	if ('token' in localStorage) token.set(localStorage.token);
+
+	keydownListener();
+}
+
+export function deleteToken() {
+	token.set(null);
+	localStorage.removeItem("token");
+}
+
+export function insertToken(token) {
+	token.set(token);
+	localStorage.token = token;
 }

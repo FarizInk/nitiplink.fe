@@ -1,13 +1,15 @@
 <script>
 	import Modal from '$lib/components/Modal.svelte';
+import { modals } from '$lib/stores';
 
-	let modalLvOne, modalLvTwo;
+	let modalLvOne, modalLvTwo, listModal;
+	modals.subscribe((value) => listModal = value)
 
 	function showModalOne() {
 		modalLvOne.show();
 	}
 
-	const showModalTwo = () => modalLvTwo.show(); 
+	const showModalTwo = () => modalLvTwo.show();
 </script>
 
 <svelte:head>
@@ -68,8 +70,10 @@
 	</div>
 </Modal>
 
-<Modal bind:this={modalLvOne} id="modal-lv-one" position="center-center" size="lg" footer={false} title="Test Modal">
+<Modal bind:this={modalLvOne} id="modal-lv-one" position="center-center" size="lg" footer={false} title="Test Modal" on:hide={() => console.log('hide')}>
 	<div slot="body">
 		<button on:click={showModalTwo} class="btn-primary btn-sm">Show modal 2</button>
 	</div>
 </Modal>
+
+{listModal}
